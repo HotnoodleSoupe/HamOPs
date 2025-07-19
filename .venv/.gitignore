@@ -28,6 +28,7 @@ var/
 .coverage
 .coverage.*
 .cache/
+.cache.sqlite
 
 # IDE-Dateien (PyCharm, VS Code, etc.)
 .idea/             # PyCharm / IntelliJ IDEA Projektdateien
