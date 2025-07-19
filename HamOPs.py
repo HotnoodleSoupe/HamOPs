@@ -16,6 +16,8 @@ from datetime import datetime, timezone
 from tkinter import messagebox
 import json
 import pytz
+import sys
+import os
 
 # GPS kordinanten fallback
 my_qth_la = 39.924986 # Breitengrad La
@@ -505,9 +507,12 @@ root.grid_columnconfigure(4, weight=1) # Macht Spalte 1 dehnbar
 
 
 # Ladet icon für programm
-icon_image = tk.PhotoImage(file='icon.png')
-root.iconphoto(False, icon_image) 
+icon_path = 'icon.png'
+if hasattr(sys, '_MEIPASS'): # Prüft, ob das Programm von PyInstaller gebündelt wurde
+    icon_path = os.path.join(sys._MEIPASS, icon_path) # Passt den Pfad an
 
+icon_image = tk.PhotoImage(file=icon_path)
+root.iconphoto(False, icon_image)
 
 
 # Stil für modernere Widgets (optional)

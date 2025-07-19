@@ -1,4 +1,4 @@
-#!/home/cem/py/hamRadioDashboard/.venv/bin/python
+#!/home/cem/py/HamOPs/.venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

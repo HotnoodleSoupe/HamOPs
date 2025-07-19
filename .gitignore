@@ -1,0 +1,14 @@
+# PyInstaller Build-Artefakte
+build/
+dist/
+*.spec
+
+# Python Virtual Environment
+.venv/
+__pycache__/
+*.pyc
+
+# Eigene Einstellungen (wenn du sie nicht teilen willst)
+settings.json
+.cache.sqlite
+
