@@ -15,12 +15,13 @@ from io import BytesIO
 from datetime import datetime, timezone
 from tkinter import messagebox
 import json
+import pytz
 
 # GPS kordinanten fallback
 my_qth_la = 39.924986 # Breitengrad La
 my_qth_lo = 32.836895 # Längengrad Lo
 my_qth_el = 907 # höchenangebe 
-timeZone = "Europe/Berlin"
+timeZone = "Europe/Istanbul"
 
 settings ={}
 SETTINGS_FILE = "settings.json"
@@ -233,27 +234,26 @@ def update_dashboard():
 
     # Aktualisiere deine Labels hier
     # Achte darauf, dass 'wetter_label' und 'solar_label' zu diesem Zeitpunkt schon existieren
-    wetter_label.config(text=f"Temperatur: {round(current_temperature_2m)}°C\n"
-                              f"Gefühlt: {round(current_apparent_temperature)}°C\n"
+    wetter_label.config(text=f"Temperature: {round(current_temperature_2m)}°C\n"
+                              f"Perceived temperature: {round(current_apparent_temperature)}°C\n"
                               f"Wind: {round(current_wind_speed_10m)} m/s aus {current_wind_direction_10m}°\n"
-                              f"Luftfeuchtigkeit: {current_relative_humidity_2m}%\n"
-                              f"Niederschlag: {current_precipitation}mm\n"
-                              f"Druck: {current_pressure_msl} hPa\n"
-                              f"Regen: {round(current_rain)}mm\n"
-                              f"Schauer: {current_showers}mm\n"
-                              f"Schneefall: {current_snowfall}cm")
+                              f"Humidity: {current_relative_humidity_2m}%\n"
+                              f"Precipitation: {current_precipitation}mm\n"
+                              f"Pressure: {current_pressure_msl} hPa\n"
+                              f"Rain: {round(current_rain)}mm\n"
+                              f"Showers: {current_showers}mm\n"
+                              f"Snowfall: {current_snowfall}cm")
 
-    solar_label.config(text=f"Aktualisiert: {updated}\n"
-                            f"Solarflux: {solarflux}\n"
+    solar_label.config(text=f"Solarflux: {solarflux}\n"
                             f"A-Index: {aindex}, K-Index: {kindex}\n"
-                            f"Röntgenstrahlung: {xray}\n"
-                            f"Protonenfluss: {protonflux}\n"
-                            f"Elektronenfluss: {electonflux}\n"
+                            f"X-Ray: {xray}\n"
+                            f"Protonenflux: {protonflux}\n"
+                            f"Electronflux: {electonflux}\n"
                             f"Aurora: {aurora}\n"
-                            f"Sonnenflecken: {sunspots}\n"
-                            f"Heliumlinie: {heliumline}\n"
+                            f"Sunspots: {sunspots}\n"
+                            f"Heliumline: {heliumline}\n"
                             f"Solarwind: {solarwind}\n"
-                            f"Magnetfeld: {magneticfield}")
+                            f"Magneticfield: {magneticfield}")
 
     root.after(300000, update_dashboard) # Aktualisiert alle 5 Minuten (300000 ms)
 
@@ -263,6 +263,7 @@ def save_settings():
     settings['my_qth_lo'] = my_qth_lo
     settings['my_qth_el'] = my_qth_el
     settings['LocalWebcamURL'] = LocalWebcamURL
+    settings['timeZone'] = timeZone
     try:
         with open(SETTINGS_FILE, 'w') as f: # offnet die datei im schreibmodus 
             json.dump(settings, f, indent=4)
@@ -282,6 +283,8 @@ def load_settings():
             my_qth_el = loaded_settings['my_qth_el']
         if 'LocalWebcamURL' in loaded_settings:
             LocalWebcamURL = loaded_settings['LocalWebcamURL']
+        if 'timeZone' in loaded_settings:
+            timeZone = load_settings['timeZone']
 
         settings.update(loaded_settings)
     except FileNotFoundError:
@@ -292,6 +295,7 @@ def load_settings():
         settings['my_qth_lo'] = my_qth_lo
         settings['my_qth_el'] = my_qth_el
         settings['LocalWebcamURL'] = LocalWebcamURL
+        settings['timeZone'] = timeZone
     except json.JSONDecodeError:
         print("Fehler beim Lesen der Einstellungsdatei. Datei beschädigt?")
         # Fallback zu Standardwerten, wenn JSON fehlerhaft ist
@@ -299,6 +303,7 @@ def load_settings():
         settings['my_qth_lo'] = my_qth_lo
         settings['my_qth_el'] = my_qth_el
         settings['LocalWebcamURL'] = LocalWebcamURL
+        settings['timeZone'] = timeZone
     except Exception as e:
         print(f"Unerwarteter Fehler beim Laden der Einstellungen: {e}")
         # Fallback zu Standardwerten bei anderen Fehlern
@@ -306,11 +311,12 @@ def load_settings():
         settings['my_qth_lo'] = my_qth_lo
         settings['my_qth_el'] = my_qth_el
         settings['LocalWebcamURL'] = LocalWebcamURL
+        settings['timeZone'] = timeZone
 
 def open_settings_window(): # settings window
     settings_window = tk.Toplevel(root)
     settings_window.title("Settings")
-    settings_window.geometry("550x380")
+    settings_window.geometry("550x480")
     settings_window.transient(root)
     settings_window.grab_set()
     settings_window.focus_set()
@@ -333,6 +339,16 @@ def open_settings_window(): # settings window
     el_entry.insert(0,str(my_qth_el))
     el_entry.pack()
 
+    # eingabe von timezone 
+    ttk.Label(settings_window, text="Time Zone:").pack(pady=5)
+    all_timezones = sorted(pytz.all_timezones)
+    timezone_combobox = ttk.Combobox(settings_window, values=all_timezones, width=45)
+    if timeZone in all_timezones:
+        timezone_combobox.set(timeZone)
+    else:
+        timezone_combobox.set("Europe/Berlin") # Fallback, falls die geladene Zeitzone nicht in der Liste ist
+    timezone_combobox.pack(pady=5)
+
     ttk.Label(settings_window, text="Link to Local Webcam:").pack(pady=5)
     local_webcam_entry = ttk.Entry(settings_window,width=50)
     local_webcam_entry.insert(0,str(LocalWebcamURL))
@@ -344,12 +360,14 @@ def open_settings_window(): # settings window
             new_lo = float(lo_entry.get())
             new_el = float(el_entry.get())
             new_webcam_url = local_webcam_entry.get()
+            new_timeZone = timezone_combobox.get()
 
-            global my_qth_la, my_qth_lo, my_qth_el, LocalWebcamURL 
+            global my_qth_la, my_qth_lo, my_qth_el, LocalWebcamURL, timeZone
             my_qth_la = new_la
             my_qth_lo = new_lo 
             my_qth_el = new_el
             LocalWebcamURL = new_webcam_url
+            timeZone = new_timeZone
 
             save_settings()
             update_dashboard()
@@ -369,7 +387,7 @@ def open_settings_window(): # settings window
 
 def load_settings():
     """Lädt Einstellungen aus der JSON-Datei."""
-    global my_qth_la, my_qth_lo, my_qth_el, settings, LocalWebcamURL # <-- Global-Deklaration ist korrekt
+    global my_qth_la, my_qth_lo, my_qth_el, settings, LocalWebcamURL, timeZone
     try:
         with open(SETTINGS_FILE, 'r') as f: # Öffne die Datei im Lesemodus ('r')
             loaded_settings = json.load(f) # Lese den JSON-Inhalt und konvertiere ihn in ein Python-Dictionary
@@ -383,6 +401,8 @@ def load_settings():
             my_qth_el = loaded_settings['my_qth_el']
         if 'LocalWebcamURL' in loaded_settings:
             LocalWebcamURL = loaded_settings['LocalWebcamURL']
+        if 'timeZone' in loaded_settings:
+            timeZone = loaded_settings['timeZone']
 
         # Speichere die geladenen Einstellungen auch im 'settings'-Dictionary
         settings.update(loaded_settings)
@@ -394,6 +414,7 @@ def load_settings():
         settings['my_qth_lo'] = my_qth_lo
         settings['my_qth_el'] = my_qth_el
         settings['LocalWebcamURL'] = LocalWebcamURL
+        settings['timeZone'] = timeZone
     except json.JSONDecodeError:
         print("Fehler beim Lesen der Einstellungsdatei. Datei beschädigt?")
         # Fallback zu Standardwerten, wenn JSON fehlerhaft ist
@@ -401,6 +422,7 @@ def load_settings():
         settings['my_qth_lo'] = my_qth_lo
         settings['my_qth_el'] = my_qth_el
         settings['LocalWebcamURL'] = LocalWebcamURL
+        settings['timeZone'] = timeZone
     except Exception as e:
         print(f"Unerwarteter Fehler beim Laden der Einstellungen: {e}")
         # Fallback zu Standardwerten bei anderen Fehlern
@@ -408,6 +430,7 @@ def load_settings():
         settings['my_qth_lo'] = my_qth_lo
         settings['my_qth_el'] = my_qth_el
         settings['LocalWebcamURL'] = LocalWebcamURL
+        settings['timeZone'] = timeZone
      
 
 def open_about_window(): # about window
@@ -425,7 +448,7 @@ def open_about_window(): # about window
 
     about_text = """
 HamOPs
-Version v1.0.0
+Version v0.1.0
 
 A dashboard for amateur radio operators displaying
 relevant weather and space weather data for radio operations.
@@ -503,8 +526,8 @@ subtitle_label.grid(row=1, column=0, columnspan=2, pady=(0, 10), sticky="ew") # 
 subtitle_label.config(anchor="center")
 
 # Füge einen Aktualisierungs-Button hinzu (optional, aber empfohlen für manuelle Updates)
-refresh_button = ttk.Button(root, text="Daten jetzt aktualisieren", command=lambda: [update_dashboard(), update_webcam_image()])
-refresh_button.grid(row=4, column=0, columnspan=2, pady=20) # Platziere den Button in einer neuen Reihe
+#refresh_button = ttk.Button(root, text="Daten jetzt aktualisieren", command=lambda: [update_dashboard(), update_webcam_image()])
+#refresh_button.grid(row=4, column=0, columnspan=2, pady=20) # Platziere den Button in einer neuen Reihe
 
 # --- Bereich für Wetter daten ---
 wetter_frame = ttk.LabelFrame(root, text="Local Weather", padding=10)
