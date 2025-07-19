@@ -1,0 +1,63 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+# Ignoriere alles in diesem Ordner
+# (Dieser Kommentar ist nur zur Erklärung, kann entfernt werden)
+
+# Python-spezifische Dateien und Verzeichnisse
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.tox/
+.mypy_cache/
+.coverage
+.coverage.*
+.cache/
+
+# IDE-Dateien (PyCharm, VS Code, etc.)
+.idea/             # PyCharm / IntelliJ IDEA Projektdateien
+*.iml              # PyCharm / IntelliJ IDEA Moduldateien
+.vscode/           # VS Code spezifische Dateien
+*.sublime-project
+*.sublime-workspace
+*.tmproj
+
+# Betriebssystem-spezifische Dateien
+.DS_Store          # macOS
+Thumbs.db          # Windows
+ehthumbs.db        # Windows
+Desktop.ini        # Windows
+
+# Temporäre oder Protokolldateien
+*.log
+*.tmp
+*.bak
+*~                 # Backup-Dateien von Linux-Editoren (z.B. Emacs, Vim)
+*.swp              # Vim Swap-Dateien
+*.swo              # Vim Swap-Dateien
+*.swn              # Vim Swap-Dateien
+
+# Sensible Daten oder lokale Konfigurationen (Beispiele)
+# Wenn du eine Datei hast, die API-Schlüssel oder Passwörter enthält,
+# oder lokale Einstellungen, die nicht geteilt werden sollen.
+# Zum Beispiel, wenn du eine config.py oder .env Datei hast:
+# config.py
+# .env
+
+# Obsidian-spezifische Dateien (falls dein Projektordner auch ein Obsidian-Vault ist)
+.obsidian/

@@ -1,0 +1,14 @@
+Metadata-Version: 2.2
+Name: tk-tools
+Version: 0.17.0
+Summary: Add your description here
+Classifier: Development Status :: 4 - Beta
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Natural Language :: English
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: engineering-notation>=0.10.0
+Requires-Dist: stringify>=0.1.1
